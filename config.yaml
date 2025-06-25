@@ -8,10 +8,10 @@ credentials:
       password: $2b$12$Esb9mGZdosam/BpgCEA3teeGl1PGaPHBvj.eRS9XBMAAVPR2Goir2
 
 cookie:
-  expiry_days: 3
-  key: some_signature_key
-  name: varnixum_login_cookie
+  name: varnixum_cookie
+  key: supersecretkey
+  expiry_days: 30
 
 preauthorized:
   emails:
-    - admin@varnixum.com
+    - guest@varnixum.com
