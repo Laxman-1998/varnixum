@@ -2,9 +2,23 @@ import streamlit as st
 import openai
 import os
 
+# Set your OpenAI key from Streamlit Secrets
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
+# ✅ Define the GPT function first (before calling it)
+def generate_explanation(prompt):
+    response = openai.ChatCompletion.create(
+        model="gpt-4",
+        messages=[
+            {"role": "system", "content": "You are a teacher who explains complex topics using simple visual-friendly explanations."},
+            {"role": "user", "content": prompt}
+        ],
+        max_tokens=500,
+        temperature=0.7,
+    )
+    return response['choices'][0]['message']['content']
 
+# ✅ Build the Streamlit interface
 st.set_page_config(page_title="Varnixum", layout="centered")
 st.title("🌱 Varnixum")
 st.subheader("Learn anything — visually and simply")
@@ -17,22 +31,9 @@ if st.button("Explain with Visual"):
     else:
         with st.spinner("🧠 Thinking..."):
             explanation = generate_explanation(question)
+
         st.markdown("### 📘 Explanation:")
         st.write(explanation)
 
-        # Temporary visual placeholder
         st.markdown("### 🖼️ Visual Aid:")
         st.image("https://via.placeholder.com/512x300.png?text=Visual+coming+soon")
-
-
-def generate_explanation(prompt):
-    response = openai.ChatCompletion.create(
-        model="gpt-4",
-        messages=[
-            {"role": "system", "content": "You are a teacher who explains complex topics using simple visual-friendly explanations."},
-            {"role": "user", "content": prompt}
-        ],
-        max_tokens=500,
-        temperature=0.7,
-    )
-    return response['choices'][0]['message']['content']
