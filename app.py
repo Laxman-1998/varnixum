@@ -1,10 +1,10 @@
 import streamlit as st
 from openai import OpenAI
+import os
 
-# Create OpenAI client
-client = OpenAI()
+# Correct way to access secret
+client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
-# Function to generate GPT explanation
 def generate_explanation(prompt):
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
@@ -16,6 +16,7 @@ def generate_explanation(prompt):
         temperature=0.7,
     )
     return response.choices[0].message.content
+
 
 # Streamlit UI
 st.set_page_config(page_title="Varnixum", layout="centered")
