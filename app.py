@@ -1,67 +1,68 @@
-import streamlit as st
-import pandas as pd
-import datetime
+# Step 1: Add Role to secrets.toml or config dictionary
+# You might have it hardcoded or in Streamlit Secrets.
+# Here's how you structure the user roles if using Python config:
+
 import streamlit_authenticator as stauth
 
-# ----------------- USER DATA -----------------
-import yaml
-from yaml.loader import SafeLoader
-
-# Fake user data (You can expand later)
+# User credentials with roles
 config = {
     'credentials': {
         'usernames': {
-            'demo_user': {
-                'email': 'demo@example.com',
-                'name': 'Demo User',
-                'password': '$2b$12$KIX0iD6zJ6kgM4NTF47u3ODW4RuNYuR2BNl5YTbDp9VZpl/0MJ7G2'  # hashed "demo123"
-            }
+            'laxman1998': {
+                'name': 'Laxman',
+                'password': stauth.Hasher(['demo123']).generate()[0],
+                'email': 'laxman@example.com',
+                'role': 'admin',
+            },
+            'testuser': {
+                'name': 'Test User',
+                'password': stauth.Hasher(['test123']).generate()[0],
+                'email': 'test@example.com',
+                'role': 'user',
+            },
         }
     },
     'cookie': {
-        'expiry_days': 15,
-        'key': 'varnixum_cookie',
-        'name': 'varnixum_login'
+        'name': 'varnixum_cookie',
+        'key': 'some_signature_key',
+        'expiry_days': 30
     },
     'preauthorized': {
         'emails': []
     }
 }
 
+# Step 2: Access and Use Role After Login
+
+import streamlit as st
+
 authenticator = stauth.Authenticate(
     config['credentials'],
     config['cookie']['name'],
     config['cookie']['key'],
-    config['cookie']['expiry_days']
-
+    config['cookie']['expiry_days'],
 )
 
-# ----------------- LOGIN SECTION -----------------
 name, auth_status, username = authenticator.login("Login", location="main")
 
-if auth_status is False:
-    st.error("Invalid username or password.")
+if auth_status:
+    role = config['credentials']['usernames'][username]['role']
+
+    if role == 'admin':
+        st.success(f"Welcome Admin {name} 👑")
+        st.markdown("### Admin Dashboard")
+        st.info("📊 You'll soon see analytics and content logs here.")
+    else:
+        st.success(f"Welcome {name}")
+        question = st.text_input("Ask a question you'd like to understand:")
+        if st.button("Explain with Visual"):
+            if question.strip():
+                st.write(f"**Question:** {question}")
+                st.write("**Mock Explanation:** This is how Varnixum will explain it visually.")
+                st.image("https://via.placeholder.com/512x300.png?text=Coming+Soon")
+            else:
+                st.warning("Please enter a question.")
+elif auth_status == False:
+    st.error("Invalid credentials")
 elif auth_status is None:
-    st.warning("Please enter your credentials.")
-elif auth_status:
-    authenticator.logout("Logout", "sidebar")
-    
-    # -------------- Main App --------------
-    st.set_page_config(page_title="Varnixum", layout="centered")
-    st.title("🌱 Varnixum")
-    st.subheader(f"Learn anything — visually and simply\nWelcome, {name}!")
-
-    # Question Input
-    question = st.text_input("Ask a question you'd like to understand:")
-
-    if st.button("Explain with Visual"):
-        if question.strip() == "":
-            st.warning("Please enter a question.")
-        else:
-            with st.spinner("🧠 Thinking..."):
-                explanation = f"🤖 This is a mock response to your question: '{question}'. Varnixum AI will soon generate visual explanations for it."
-
-            st.markdown("### 📘 Explanation:")
-            st.write(explanation)
-            st.markdown("### 🖼️ Visual Aid:")
-            st.image("https://via.placeholder.com/512x300.png?text=Visual+coming+soon")
+    st.warning("Please enter your credentials")
