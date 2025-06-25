@@ -1,13 +1,14 @@
 import streamlit as st
 import streamlit_authenticator as stauth
 import yaml
+import openai
 from yaml.loader import SafeLoader
 
-# Load credentials from YAML
+# Load config.yaml
 with open('config.yaml') as file:
     config = yaml.load(file, Loader=SafeLoader)
 
-# Authenticate
+# Create authenticator object
 authenticator = stauth.Authenticate(
     config['credentials'],
     config['cookie']['name'],
@@ -16,27 +17,32 @@ authenticator = stauth.Authenticate(
     config['preauthorized']
 )
 
-# Sidebar Login Section
-st.sidebar.title("🔐 Login or Continue as Guest")
-login_option = st.sidebar.radio("Choose Access Mode:", ["Login", "Continue as Guest"])
+# Display login form in main area (not sidebar)
+name, auth_status, username = authenticator.login('Login', location='main')
 
-if login_option == "Login":
-    name, auth_status, username = authenticator.login("Login", location="sidebar")
+# Title
+st.markdown("""
+    <h1 style='text-align: center;'>🌱 Varnixum</h1>
+    <h3 style='text-align: center;'>Learn anything — visually and simply</h3>
+""", unsafe_allow_html=True)
 
-    if auth_status == False:
-        st.sidebar.error("Invalid credentials. Please try again.")
-    elif auth_status == None:
-        st.sidebar.warning("Please enter your credentials.")
-    elif auth_status:
-        authenticator.logout("Logout", "sidebar")
-        st.success(f"Welcome back, **{name}** 👋")
-        st.title("🌱 Varnixum — Visual Learning Dashboard")
-        st.write("You're logged in and ready to go!")
-        st.write("✅ We’ll soon personalize your experience based on your role.")
-        # Insert main app content here
+# Check auth status
+if auth_status == False:
+    st.error("Invalid credentials. Please try again.")
+elif auth_status is None:
+    st.warning("Please enter your credentials.")
+elif auth_status:
+    authenticator.logout('Logout', location='sidebar')
+    st.success(f"Welcome {name}! You are logged in as {username}.")
 
-elif login_option == "Continue as Guest":
-    st.success("You're browsing as a guest 👀")
-    st.title("🌱 Varnixum — Learn Visually and Simply")
-    st.write("Feel free to try out the app with limited access.")
-    # You can restrict some features here later
+    # App Body
+    question = st.text_input("Ask a question you'd like to understand:")
+
+    if question:
+        st.subheader("📘 Explanation:")
+        st.markdown(f"🤖 This is a mock response to your question: '{question}'. Varnixum AI will soon generate visual explanations for it.")
+
+        st.subheader("🖼️ Visual Aid:")
+        st.image("https://placehold.co/600x400?text=AI+Visual+Here", caption="(Coming soon with real visual generation)")
+else:
+    st.info("🔐 Please login or continue as guest.")
