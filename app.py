@@ -2,13 +2,11 @@ import streamlit as st
 from openai import OpenAI
 import os
 
-# Set the OpenAI API key from environment
+# Setup OpenAI API Key
 os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
-
-# Create OpenAI client
 client = OpenAI()
 
-# Define function to generate explanation
+# Function to generate GPT explanation
 def generate_explanation(prompt):
     response = client.chat.completions.create(
         model="gpt-4",
