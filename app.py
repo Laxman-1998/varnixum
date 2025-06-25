@@ -1,9 +1,7 @@
 import streamlit as st
 from openai import OpenAI
-import os
 
-# Setup OpenAI API Key
-os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
+# Create OpenAI client
 client = OpenAI()
 
 # Function to generate GPT explanation
@@ -38,3 +36,4 @@ if st.button("Explain with Visual"):
 
         st.markdown("### 🖼️ Visual Aid:")
         st.image("https://via.placeholder.com/512x300.png?text=Visual+coming+soon")
+
