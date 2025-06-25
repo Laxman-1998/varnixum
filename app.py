@@ -1,68 +1,45 @@
-# Step 1: Add Role to secrets.toml or config dictionary
-# You might have it hardcoded or in Streamlit Secrets.
-# Here's how you structure the user roles if using Python config:
-
-import streamlit_authenticator as stauth
-
-# User credentials with roles
-config = {
-    'credentials': {
-        'usernames': {
-            'laxman1998': {
-                'name': 'Laxman',
-                'password': stauth.Hasher(['demo123']).generate()[0],
-                'email': 'laxman@example.com',
-                'role': 'admin',
-            },
-            'testuser': {
-                'name': 'Test User',
-                'password': stauth.Hasher(['test123']).generate()[0],
-                'email': 'test@example.com',
-                'role': 'user',
-            },
-        }
-    },
-    'cookie': {
-        'name': 'varnixum_cookie',
-        'key': 'some_signature_key',
-        'expiry_days': 30
-    },
-    'preauthorized': {
-        'emails': []
-    }
-}
-
-# Step 2: Access and Use Role After Login
-
 import streamlit as st
+import json
 
-authenticator = stauth.Authenticate(
-    config['credentials'],
-    config['cookie']['name'],
-    config['cookie']['key'],
-    config['cookie']['expiry_days'],
-)
+# Load users from JSON
+def load_users():
+    with open("users.json", "r") as file:
+        return json.load(file)
 
-name, auth_status, username = authenticator.login("Login", location="main")
+# Basic login UI
+def login():
+    st.title("🔐 Login to Varnixum")
+    users = load_users()
+    username = st.text_input("Username")
+    password = st.text_input("Password", type="password")
 
-if auth_status:
-    role = config['credentials']['usernames'][username]['role']
+    if st.button("Login"):
+        for user in users:
+            if user["username"] == username and user["password"] == password:
+                st.success(f"Welcome, {username}!")
+                st.session_state.logged_in = True
+                st.session_state.username = username
+                return True
+        st.error("Invalid credentials")
+    return False
 
-    if role == 'admin':
-        st.success(f"Welcome Admin {name} 👑")
-        st.markdown("### Admin Dashboard")
-        st.info("📊 You'll soon see analytics and content logs here.")
-    else:
-        st.success(f"Welcome {name}")
-        question = st.text_input("Ask a question you'd like to understand:")
-        if st.button("Explain with Visual"):
-            if question.strip():
-                st.write(f"**Question:** {question}")
-                st.write("**Mock Explanation:** This is how Varnixum will explain it visually.")
-                st.image("https://via.placeholder.com/512x300.png?text=Coming+Soon")
-            else:
-                st.warning("Please enter a question.")
-elif auth_status == False:
-    st.error("Invalid credentials")
-elif auth_status is None:
-    st.warning("Please enter your credentials")
+# Initial state
+if "logged_in" not in st.session_state:
+    st.session_state.logged_in = False
+
+# Login or show main app
+if not st.session_state.logged_in:
+    login()
+else:
+    st.title("🌱 Varnixum")
+    st.write(f"Welcome, **{st.session_state.username}**! 👋")
+    st.write("Ask a question you'd like to understand:")
+
+    question = st.text_input("📌 Your Question:")
+    if question:
+        # For now, mock explanation
+        st.subheader("📘 Explanation:")
+        st.info(f"🤖 This is a mock explanation for: '{question}'")
+
+        st.subheader("🖼️ Visual Aid:")
+        st.image("https://placehold.co/400x200?text=Coming+Soon", caption="Visuals coming soon!")
