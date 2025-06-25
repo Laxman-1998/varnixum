@@ -1,20 +1,17 @@
 credentials:
   usernames:
     admin@varnixum.com:
-      email: admin@varnixum.com
-      name: Admin
-      password: "$2b$12$R1iDrQs/tLE.Fm6KmyCS9eNbb45g/UhxtZ02.XY0rc5vHrB8AMjSe"
+      name: Admin Varnixum
+      password: $2b$12$vdfvKgpicYGN6rqAHK1a4u6IXTenLLJCNZa3MeQftjjvuNcvn.yhu
     user1@varnixum.com:
-      email: user1@varnixum.com
       name: User One
-      password: "$2b$12$4POWb8vIjz9Z71ejUPKLDe6m5BMDYF5YqTBOebEVG1sOeKke9psbi"
+      password: $2b$12$Esb9mGZdosam/BpgCEA3teeGl1PGaPHBvj.eRS9XBMAAVPR2Goir2
 
 cookie:
   expiry_days: 3
   key: some_signature_key
-  name: varnixum_cookie
+  name: varnixum_login_cookie
 
 preauthorized:
   emails:
     - admin@varnixum.com
-    - user1@varnixum.com
