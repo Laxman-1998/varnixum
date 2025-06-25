@@ -14,7 +14,7 @@ config = {
             'demo_user': {
                 'email': 'demo@example.com',
                 'name': 'Demo User',
-                'password': stauth.Hasher(['demo123']).generate()[0]
+                'password': '$2b$12$KIX0iD6zJ6kgM4NTF47u3ODW4RuNYuR2BNl5YTbDp9VZpl/0MJ7G2'  # hashed "demo123"
             }
         }
     },
