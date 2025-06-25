@@ -7,7 +7,7 @@ client = OpenAI()
 # Function to generate GPT explanation
 def generate_explanation(prompt):
     response = client.chat.completions.create(
-        model="gpt-4",
+        model="gpt-3.5-turbo",
         messages=[
             {"role": "system", "content": "You are a teacher who explains complex topics using simple visual-friendly explanations."},
             {"role": "user", "content": prompt}
