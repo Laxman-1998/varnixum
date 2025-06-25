@@ -1,13 +1,16 @@
 import streamlit as st
-import openai
+from openai import OpenAI
 import os
 
-# Set your OpenAI key from Streamlit Secrets
-openai.api_key = os.getenv("OPENAI_API_KEY")
+# Set the OpenAI API key from environment
+os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
 
-# ✅ Define the GPT function first (before calling it)
+# Create OpenAI client
+client = OpenAI()
+
+# Define function to generate explanation
 def generate_explanation(prompt):
-    response = openai.ChatCompletion.create(
+    response = client.chat.completions.create(
         model="gpt-4",
         messages=[
             {"role": "system", "content": "You are a teacher who explains complex topics using simple visual-friendly explanations."},
@@ -16,9 +19,9 @@ def generate_explanation(prompt):
         max_tokens=500,
         temperature=0.7,
     )
-    return response['choices'][0]['message']['content']
+    return response.choices[0].message.content
 
-# ✅ Build the Streamlit interface
+# Streamlit UI
 st.set_page_config(page_title="Varnixum", layout="centered")
 st.title("🌱 Varnixum")
 st.subheader("Learn anything — visually and simply")
